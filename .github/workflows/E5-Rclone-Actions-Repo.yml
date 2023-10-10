@@ -20,11 +20,13 @@ jobs:
 
       - name: Add config #解压配置文件
         run: |
-         echo -e "$RCLONE_CONFIG" > rclone.conf
+         echo "$RCLONE_CONFIG" | base64 --decode > rclone.conf
         env:
          RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
      
       - name: Run rclone #运行rclone
+        env:
+          REMOTE_NAMES: "dropbox"  # Default value
         run: |
           
           # 更改时区
@@ -32,14 +34,18 @@ jobs:
           
           # 列出文件(此处不展示)
           echo "列出文件(此处不展示)"
-          rclone lsd dropbox:/ > "lsd.log" --config=rclone.conf
-          rclone cat dropbox:/dummy.txt --config=rclone.conf
-          rclone copy dropbox:/dummy.txt . --config=rclone.conf
-          rclone mkdir dropbox:E5-Rclone-Actions-Repo/ --config=rclone.conf
-          rclone rmdir dropbox:E5-Rclone-Actions-Repo/ --config=rclone.conf
+          IFS=';' read -ra REMOTES <<< "$REMOTE_NAMES"
+          for REMOTE in "${REMOTES[@]}"; do
+            echo "Processing remote: $REMOTE"
+            rclone lsd "$REMOTE:/" --config=rclone.conf > "lsd.log"
+            rclone cat "$REMOTE:/dummy.txt" --config=rclone.conf
+            rclone copy "$REMOTE:/dummy.txt" . --config=rclone.conf
+            rclone mkdir "$REMOTE:E5-Rclone-Actions-Repo/" --config=rclone.conf
+            rclone rmdir "$REMOTE:E5-Rclone-Actions-Repo/" --config=rclone.conf
+            rm dummy.txt
+            rm lsd.log
+          done
           rm rclone.conf
-          rm dummy.txt
-          rm lsd.log
           
       - name: Commit config #提交配置文件
         run: |
