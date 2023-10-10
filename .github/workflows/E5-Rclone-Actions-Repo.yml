@@ -44,6 +44,7 @@ jobs:
             rclone rmdir "$REMOTE:E5-Rclone-Actions-Repo/" --config=rclone.conf
             rm dummy.txt
             rm lsd.log
+            echo ""
           done
           rm rclone.conf
           
