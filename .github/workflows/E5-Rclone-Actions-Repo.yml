@@ -26,7 +26,7 @@ jobs:
      
       - name: Run rclone #运行rclone
         env:
-          REMOTE_NAMES: "dropbox"  # Default value
+          REMOTE_NAMES: ${{ vars.REMOTE_NAMES }}  # Default value
         run: |
           
           # 更改时区
