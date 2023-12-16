@@ -1,4 +1,4 @@
-name: E5-Rclone-Actions-Repo
+name: notgmail
 
 on:
   workflow_dispatch:
@@ -37,9 +37,9 @@ jobs:
           IFS=';' read -ra REMOTES <<< "$REMOTE_NAMES"
           for REMOTE in "${REMOTES[@]}"; do
             echo "Processing remote: $REMOTE"
-            rclone lsd "$REMOTE:/" --config=rclone.conf > "lsd.log"
-            rclone cat "$REMOTE:/dummy.txt" --config=rclone.conf
-            rclone copy "$REMOTE:/dummy.txt" . --config=rclone.conf
+            rclone lsd "$REMOTE:" --config=rclone.conf > "lsd.log"
+            rclone cat "$REMOTE:dummy.txt" --config=rclone.conf
+            rclone copy "$REMOTE:dummy.txt" . --config=rclone.conf
             rclone mkdir "$REMOTE:E5-Rclone-Actions-Repo/" --config=rclone.conf
             rclone rmdir "$REMOTE:E5-Rclone-Actions-Repo/" --config=rclone.conf
             rm dummy.txt
@@ -54,5 +54,5 @@ jobs:
          git config --global user.email "144663295+ihzazuhairnawan@users.noreply.github.com"
          git config --global user.name "ihzazuhairnawan"
          git add .
-         git commit -am "Auto update rclone config"
+         git commit -am "Not gmail daily commit"
          git push
